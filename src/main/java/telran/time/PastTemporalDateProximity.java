@@ -16,7 +16,13 @@ public class PastTemporalDateProximity implements TemporalAdjuster {
     @Override
     public Temporal adjustInto(Temporal temporal) {
         int index = getIndexOfPastTemporalDateProximity(temporal);
-        return (index < 0 || index >= temporals.length) ? null : temporals[index];
+        Temporal result = null;
+        if ( index >= 0 && index < temporals.length) {
+            result = temporals[index];
+            long daysBetweenTemporals = ChronoUnit.DAYS.between(temporal, result);
+            result = temporal.plus(daysBetweenTemporals, ChronoUnit.DAYS);
+        }
+        return result;
     }
 
     private int getIndexOfPastTemporalDateProximity(Temporal temporal) {
