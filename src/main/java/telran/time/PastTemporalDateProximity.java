@@ -1,5 +1,6 @@
 package telran.time;
 
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
@@ -15,14 +16,14 @@ public class PastTemporalDateProximity implements TemporalAdjuster {
 
     @Override
     public Temporal adjustInto(Temporal temporal) {
+        Temporal resultTemporal = null;
         int index = getIndexOfPastTemporalDateProximity(temporal);
-        Temporal result = null;
         if ( index >= 0 && index < temporals.length) {
-            result = temporals[index];
-            long daysBetweenTemporals = ChronoUnit.DAYS.between(temporal, result);
-            result = temporal.plus(daysBetweenTemporals, ChronoUnit.DAYS);
+            resultTemporal = temporals[index];
+            long daysBetweenTemporals = ChronoUnit.DAYS.between(temporal, resultTemporal);
+            resultTemporal = temporal.plus(daysBetweenTemporals, ChronoUnit.DAYS);
         }
-        return result;
+        return resultTemporal;
     }
 
     private int getIndexOfPastTemporalDateProximity(Temporal temporal) {
@@ -38,5 +39,11 @@ public class PastTemporalDateProximity implements TemporalAdjuster {
             middle = start + (finish - start) / 2;
         }
         return start - 1;
+    }
+
+    private boolean isSuppurtedFiedlsDMY(Temporal date) {
+        return date.isSupported(ChronoField.MONTH_OF_YEAR) &&
+                date.isSupported(ChronoField.DAY_OF_MONTH) &&
+                date.isSupported(ChronoField.YEAR);
     }
 }
